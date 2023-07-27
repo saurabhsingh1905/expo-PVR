@@ -7,20 +7,26 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useContext, useEffect, useLayoutEffect } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Place } from "../PlaceContext";
 import MovieCard from "../components/MovieCard";
 import Headers from "../components/Headers";
-
+import {
+  BottomModal,
+  ModalContent,
+  ModalFooter,
+  ModalTitle,
+  SlideAnimation,
+} from "react-native-modals";
+import { Foundation } from "@expo/vector-icons";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   const { selectedCity, setSelectedCity } = useContext(Place);
-
   const data = [
-      {
+    {
       adult: false,
       backdrop_path: "/2EL6QrQmUt2ntBXjuHO4KsEfaoU.jpg",
       genre_ids: [27, 9648, 53],
@@ -353,20 +359,51 @@ const HomeScreen = () => {
       vote_count: 1,
     },
   ];
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState();
+  const [sortedData,setSortedData] = useState(data);
+
+  
+  const genres = [
+    {
+      id: "0",
+      language: "Horror",
+    },
+    {
+      id: "1",
+      language: "Comedy",
+    },
+    {
+      id: "2",
+      language: "Action",
+    },
+    {
+      id: "3",
+      language: "Drama",
+    },
+    {
+      id: "5",
+      language: "Thriller",
+    },
+    {
+      id: "6",
+      language: "Romance",
+    },
+  ];
   const moveAnimation = new Animated.Value(0);
-  useEffect(()=>{
-Animated.loop(
-    Animated.timing(moveAnimation,{
-        toValue:-30,
-        duration:2000,
-        useNativeDriver:true
-    })
-).start()
-  },[selectedCity])
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(moveAnimation, {
+        toValue: -30,
+        duration: 2000,
+        useNativeDriver: true,
+      })
+    ).start();
+  }, [selectedCity]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerLeft: () => <Text> "Hello PVR </Text>,
+      headerLeft: () => <Text> EXPO PVR </Text>,
       headerStyle: {
         backgroundColor: "#f5f5f5",
         shadowColor: "transparent",
@@ -378,12 +415,22 @@ Animated.loop(
         <Pressable
           style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
         >
-          <Ionicons name="notifications-outline" size={24} color="black" />
-          <Ionicons onPress={()=> navigation.navigate("Places")} name="ios-location-outline" size={24} color="black" />
+          <Ionicons name="notifications-outline" size={24} color="#ffc40c" />
+          <Ionicons
+            onPress={() => navigation.navigate("Places")}
+            name="ios-location-outline"
+            size={24}
+            color="#ffc40c"
+          />
 
-          <Pressable onPress={()=> navigation.navigate("Places")}>
-            <Animated.Text style={[styles.text,{transform:[{translateX:moveAnimation}]}]}>
-                <Text>{selectedCity} </Text>
+          <Pressable onPress={() => navigation.navigate("Places")}>
+            <Animated.Text
+              style={[
+                styles.text,
+                { transform: [{ translateX: moveAnimation }] },
+              ]}
+            >
+              <Text>{selectedCity} </Text>
             </Animated.Text>
           </Pressable>
         </Pressable>
@@ -391,19 +438,226 @@ Animated.loop(
     });
   }, [selectedCity]);
 
+  const languages = [
+    {
+      id: "0",
+      language: "English",
+    },
+    {
+      id: "10",
+      language: "Kannada",
+    },
+    {
+      id: "1",
+      language: "Telugu",
+    },
+    {
+      id: "2",
+      language: "Hindi",
+    },
+    {
+      id: "3",
+      language: "Tamil",
+    },
+    {
+      id: "5",
+      language: "Malayalam",
+    },
+  ];
 
+  const applyFilter =(filter)=> {
+setModalVisible(false);
+switch(filter){
+  case "English" :
+    setSortedData(sortedData.filter((item)=> item.original_language === selectedFilter));
+    break;
+  case "Kannada" :
+    setSortedData(sortedData.filter((item)=> item.original_language === selectedFilter));
+    break;
+  case "Telugu" :
+    setSortedData(sortedData.filter((item)=> item.original_language === selectedFilter));
+    break;
+  case "Hindi" :
+    setSortedData(sortedData.filter((item)=> item.original_language === selectedFilter));
+    break;
+  case "Tamil" :
+    setSortedData(sortedData.filter((item)=> item.original_language === selectedFilter));
+    break;
+  case "Malayalam" :
+    setSortedData(sortedData.filter((item)=> item.original_language === selectedFilter));
+    break;
+}
+  }
 
   return (
-<>
-<FlatList ListHeaderComponent={Headers} data={data} renderItem={({item})=> <MovieCard /> } />
-</>
-  )
+    <View>
+      <FlatList
+        numColumns={2}
+        columnWrapperStyle={{ justifyContent: "space-between" }}
+        ListHeaderComponent={Headers}
+        data={sortedData}
+        renderItem={({ item, index }) => <MovieCard item={item} key={index} />}
+      />
+      <Pressable
+        onPress={() => setModalVisible((prev) => !prev)}
+        style={{
+          position: "absolute",
+          bottom: 30,
+          backgroundColor: "#ffc40c",
+          width: 60,
+          height: 60,
+          borderRadius: 30,
+          right: 20,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Foundation name="filter" size={24} color="black" />
+      </Pressable>
+      <BottomModal
+        onBackdropPress={() => setModalVisible((prev) => !prev)}
+        swipeDirection={["up", "down"]}
+        swipeThreshold={200}
+        footer={
+          <ModalFooter>
+            <Pressable
+            onPress={()=>applyFilter(selectedFilter)}
+              style={{
+                paddingRight: 10,
+                marginLeft: "auto",
+                marginRight: "auto",
+                marginVertical: 10,
+                marginBottom: 10,
+                // marginBottom: 30,
+              }}
+            >
+              <Text>Apply</Text>
+            </Pressable>
+          </ModalFooter>
+        }
+        modalTitle={<ModalTitle title="Filters" style={{}} />}
+        modalAnimation={new SlideAnimation({ slideFrom: "bottom" })}
+        visible={modalVisible}
+        onHardwareBackPress={() => setModalVisible((prev) => !prev)}
+        onTouchOutside={() => setModalVisible((prev) => !prev)}
+      >
+        <ModalContent style={{ width: "100%", height: 260 }}>
+          <Text
+            style={{
+              paddingVertical: 1,
+              fontSize: 15,
+              fontWeight: "500",
+              marginTop: 5,
+            }}
+          >
+            Language
+          </Text>
+          <Pressable
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            {languages.map((item, index) =>
+              selectedFilter === item.language ? (
+                <Pressable
+                  onPress={() => setSelectedFilter()}
+                  key={index}
+                  style={{
+                    margin: 10,
+                   
+                    backgroundColor:"orange",
+                   
+                    paddingVertical: 5,
+                    borderRadius: 25,
+                    paddingHorizontal: 11,
+                  }}
+                >
+                  <Text style={{color:"white",fontWeight:"500"}}>{item.language}</Text>
+                </Pressable>
+              ) : (
+                <Pressable
+                  onPress={() => setSelectedFilter(item.language)}
+                  key={index}
+                  style={{
+                    margin: 10,
+                    borderColor: "#C0C0C0",
+                    borderWidth: 1,
+                    paddingVertical: 5,
+                    borderRadius: 25,
+                    paddingHorizontal: 11,
+                  }}
+                >
+                  <Text>{item.language}</Text>
+                </Pressable>
+              )
+            )}
+          </Pressable>
+
+          {/* paddingVertical:5,fontSize:15,fontWeight:"500",marginTop:10 */}
+          <Text
+            style={{
+              paddingVertical: 1,
+              fontSize: 15,
+              fontWeight: "500",
+              marginTop: 5,
+            }}
+          >
+            Genres
+          </Text>
+          <Pressable
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              flexWrap: "wrap",
+            }}
+          >
+             {genres.map((item, index) =>
+              selectedFilter === item.language ? (
+                <Pressable
+                  onPress={() => setSelectedFilter()}
+                  key={index}
+                  style={{
+                    margin: 10,
+                   
+                    backgroundColor:"orange",
+                   
+                    paddingVertical: 5,
+                    borderRadius: 25,
+                    paddingHorizontal: 11,
+                  }}
+                >
+                  <Text style={{color:"white",fontWeight:"500"}}>{item.language}</Text>
+                </Pressable>
+              ) : (
+                <Pressable
+                  onPress={() => setSelectedFilter(item.language)}
+                  key={index}
+                  style={{
+                    margin: 10,
+                    borderColor: "#C0C0C0",
+                    borderWidth: 1,
+                    paddingVertical: 5,
+                    borderRadius: 25,
+                    paddingHorizontal: 11,
+                  }}
+                >
+                  <Text>{item.language}</Text>
+                </Pressable>
+              )
+            )}
+          </Pressable>
+        </ModalContent>
+      </BottomModal>
+    </View>
+  );
 };
 
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-    text:{
-        fontSize:16
-    }
+  text: {
+    fontSize: 16,
+  },
 });

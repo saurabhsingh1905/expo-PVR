@@ -7,6 +7,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import PlacesScreen from "../screens/PlacesScreen";
+import MovieScreen from "../screens/MovieScreen";
 
 const ProfileStack = createNativeStackNavigator();
 const HomeStack = createNativeStackNavigator();
@@ -15,7 +16,8 @@ function HomeStackScreens() {
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen name="HomeScreen" component={HomeScreen} options={{title:""}} />
-      <HomeStack.Screen name="Places" component={PlacesScreen} options={{title:"Places"}} />
+      <HomeStack.Screen name="Places" component={PlacesScreen}  />
+      <HomeStack.Screen name="Movies" component={MovieScreen} />
     </HomeStack.Navigator>
   );
 }
