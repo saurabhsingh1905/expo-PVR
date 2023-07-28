@@ -6,7 +6,7 @@ import { Ionicons, FontAwesome } from "@expo/vector-icons";
 const TheatreScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const [selectedSeat,setSelectedSeat] = useState([])
+  const [selectedSeats, setSelectedSeats] = useState([]);
   const [rows, setRows] = useState([
     {
       row: "A",
@@ -84,11 +84,24 @@ const TheatreScreen = () => {
     });
   }, []);
 
-  const handleSeatPress = (row,seat)=>{
-// console.log("row",row)
-// console.log("seat",seat)
-const isSelected = selectedSeat.some((selectedSeat)=> selectedSeat.row === row && selectedSeat.seat ===seat)
-  }
+  const handleSeatPress = (row, seat) => {
+    // console.log("row",row)
+    // console.log("seat",seat)
+    const isSelected = selectedSeats.some(
+      (selectedSeat) => selectedSeat.row === row && selectedSeat.seat === seat
+    );
+    if (isSelected) {
+      setSelectedSeats((prevState) =>
+        prevState.filter(
+          (selectedSeat) =>
+            selectedSeat.row !== row || selectedSeat.seat !== seat
+        )
+      );
+    } else {
+      setSelectedSeats((prevState) => [...prevState, { row, seat }]);
+    }
+  };
+  console.log(selectedSeats);
 
   const renderSeats = () => {
     return rows.map((row, rowIndex) => {
@@ -109,7 +122,19 @@ const isSelected = selectedSeat.some((selectedSeat)=> selectedSeat.row === row &
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               {row.seats.map((seat, seatIndex) => (
-                <Pressable onPress={()=> handleSeatPress(row.row,seat.seat)} key={seatIndex} style={[styles.seat]}>
+                <Pressable
+                  onPress={() => handleSeatPress(row.row, seat.seat)}
+                  key={seatIndex}
+                  style={[
+                    styles.seat,
+                    selectedSeats.some(
+                      (selectedSeat) =>
+                        selectedSeat.row === row.row &&
+                        selectedSeat.seat === seat.seat
+                    ) && styles.selectedSeat, seat.bookingStatus === "disabled" && styles.bookedSeat
+                  ]}
+                  disabled = {seat.bookingStatus === "disabled"}
+                >
                   <Text>{seat.seat}</Text>
                 </Pressable>
               ))}
@@ -119,6 +144,20 @@ const isSelected = selectedSeat.some((selectedSeat)=> selectedSeat.row === row &
       );
     });
   };
+
+  const pay = () => {
+     const updatedRows = [...rows];
+     selectedSeats.forEach((seat) => {
+       const rowIndex = updatedRows.findIndex((row) => row.row === seat.row);
+      // console.log("row Index",rowIndex);
+       const seatIndex = updatedRows[rowIndex].seats.findIndex((s) => s.seat === seat.seat);
+      // console.log("seat Index",seatIndex);
+       updatedRows[rowIndex].seats[seatIndex].bookingStatus = "disabled";
+     });
+
+     setRows(updatedRows);
+     setSelectedSeats([]);
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
@@ -180,6 +219,21 @@ const isSelected = selectedSeat.some((selectedSeat)=> selectedSeat.row === row &
           <Text>Booked</Text>
         </View>
       </View>
+
+      <Pressable
+      onPress={pay}
+        style={{
+          marginTop: 50,
+          backgroundColor: "#C0C0C0",
+          padding: 10,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <Text>Selected Seats</Text>
+        <Text>PAY 100</Text>
+      </Pressable>
     </View>
   );
 };
@@ -198,4 +252,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: "#C0C0C0",
   },
+  selectedSeat: {
+    backgroundColor: "#ffd700",
+    borderColor: "transparent",
+  },
+  bookedSeat:{
+    backgroundColor:"#989898",
+    borderColor:"transparent"
+  }
 });

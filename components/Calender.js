@@ -19,7 +19,7 @@ const Calendar = ({ selected, onSelectDate }) => {
 //   console.log(dates);
   return (
     <View>
-      <ScrollView horizontal>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {dates.map((date, index) => (
           <Date
             date={date}
