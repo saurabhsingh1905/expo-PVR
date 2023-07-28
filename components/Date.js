@@ -1,18 +1,20 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { StyleSheet, Text, View, Pressable } from "react-native";
+import React, { useState } from "react";
 import moment from "moment";
 
 const Date = ({ date, selected, onSelectDate }) => {
   const day = moment(date).format("ddd");
-  //console.log(day)
+
   const dayNumber = moment(date).format("D");
-  // console.log(dayNumber)
   const fullDate = moment(date).format("YYYY-MM-DD");
-  console.log(fullDate);
+  //console.log(fullDate);
   return (
     <Pressable
       onPress={() => onSelectDate(fullDate)}
-      style={[styles.container, selected === fullDate && { color: "white" }]}
+      style={[
+        styles.container,
+        selected === fullDate && { backgroundColor: "#FFD700" },
+      ]}
     >
       <Text
         style={[

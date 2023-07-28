@@ -1,7 +1,6 @@
 import {
   Animated,
   FlatList,
-  FlatListComponent,
   Pressable,
   StyleSheet,
   Text,
@@ -515,7 +514,7 @@ switch(filter){
         <Foundation name="filter" size={24} color="black" />
       </Pressable>
       <BottomModal
-        onBackdropPress={() => setModalVisible((prev) => !prev)}
+        onBackdropPress={() => setModalVisible(prev => !prev)}
         swipeDirection={["up", "down"]}
         swipeThreshold={200}
         footer={

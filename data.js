@@ -1210,3 +1210,5 @@ const malls = [
       veg: true,
     },
   ];
+
+  export default {malls}

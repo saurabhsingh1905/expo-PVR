@@ -1,9 +1,9 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import moment from "moment/moment";
-import Date from "../components/Date"
+import React, { useState, useEffect } from "react";
+import moment from "moment";
+import Date from "./Date";
 
-const Calender = ({ selected, onSelected }) => {
+const Calendar = ({ selected, onSelectDate }) => {
   const [dates, setDates] = useState([]);
   const getDates = () => {
     const myDates = [];
@@ -13,25 +13,26 @@ const Calender = ({ selected, onSelected }) => {
     }
     setDates(myDates);
   };
-
   useEffect(() => {
     getDates();
   }, []);
- // console.log(dates);
-
+//   console.log(dates);
   return (
-    <ScrollView horizontal>
-      {dates.map((date, index) => (
-       
-        <Date  date={date}
-        key={index}
-        selected={selected}
-        onSelectDate={onSelected} />
-      ))}
-    </ScrollView>
+    <View>
+      <ScrollView horizontal>
+        {dates.map((date, index) => (
+          <Date
+            date={date}
+            key={index}
+            selected={selected}
+            onSelectDate={onSelectDate}
+          />
+        ))}
+      </ScrollView>
+    </View>
   );
 };
 
-export default Calender;
+export default Calendar;
 
 const styles = StyleSheet.create({});
