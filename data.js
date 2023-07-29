@@ -49,7 +49,7 @@ const places = [
     },
   ];
 
-const fooddata = [
+const moviedata = [
     {
       adult: false,
       backdrop_path: "/2EL6QrQmUt2ntBXjuHO4KsEfaoU.jpg",

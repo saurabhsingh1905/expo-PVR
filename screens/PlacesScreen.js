@@ -7,14 +7,16 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React, { useContext, useLayoutEffect } from "react";
+import React, { useContext, useEffect, useLayoutEffect,useState} from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { Place } from "../PlaceContext";
 import { AntDesign } from '@expo/vector-icons';
+import { client } from "../expopvr-sanity/sanity";
 
 const PlacesScreen = () => {
-  const navigation = useNavigation();
+const navigation = useNavigation();
+const [cities,setCities] = useState([])
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -32,7 +34,7 @@ const PlacesScreen = () => {
     });
   }, []);
 
-  const { selectedCity, setSelectedCity } = useContext(Place);
+  const { selectedCity, setSelectedCity,locationId,setLocationId } = useContext(Place);
 
   const places = [
     {
@@ -87,12 +89,24 @@ const PlacesScreen = () => {
   
   ];
 
-  const selectCity = (city)=> {
+  useEffect(()=>{
+    const fetchData = async ()=> {
+      const result = await client.fetch(`*[
+        _type == "location"
+      ]`)
+      setCities(result)
+    }
+    fetchData()
+  },[])
+
+  const selectCity = (city,locationId)=> {
 setSelectedCity(city)
+setLocationId(locationId)
 setTimeout(() => {
     navigation.navigate("HomeScreen")
-}, 1000);
+}, 800);
   }
+  console.log(cities)
 
   return (
     <View>
@@ -126,10 +140,10 @@ setTimeout(() => {
     <FlatList
         numColumns={2}
         columnWrapperStyle={{justifyContent:"space-between"}}
-        data={places}
+        data={cities}
         renderItem={({ item, index }) => (
 
-          <Pressable style={{marginVertical:10,marginHorizontal:10}} onPress={()=> selectCity(item.place)}>
+          <Pressable style={{marginVertical:10,marginHorizontal:10}} onPress={()=> selectCity(item.city,item._id)}>
             <ImageBackground
               source={{ uri: item.image }}
               style={{ width: 160, height: 100,opacity:0.8 }}
@@ -142,7 +156,7 @@ setTimeout(() => {
             )}
 
                 <View style={{flex:1,marginLeft:7,justifyContent:"flex-end"}}>
-                    <Text style={{color:"white",fontWeight:700}}>{item.place}</Text>
+                    <Text style={{color:"white",fontWeight:700}}>{item.city}</Text>
                 </View>
             </ImageBackground>
            

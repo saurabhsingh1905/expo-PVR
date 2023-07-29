@@ -20,8 +20,15 @@ import {
   SlideAnimation,
 } from "react-native-modals";
 import { Foundation } from "@expo/vector-icons";
+import "url-search-params-polyfill";
+import { URL } from "react-native-url-polyfill";
+import { client } from "../expopvr-sanity/sanity";
 
 const HomeScreen = () => {
+  global.URL = URL;
+  const params = new URLSearchParams();
+  params.set("foo", "bar");
+
   const navigation = useNavigation();
   const { selectedCity, setSelectedCity } = useContext(Place);
   const data = [
@@ -360,9 +367,21 @@ const HomeScreen = () => {
   ];
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState();
-  const [sortedData,setSortedData] = useState(data);
+  const [sortedData, setSortedData] = useState([]);
+  const [moviesData, setMoviesData] = useState([]);
 
-  
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await client.fetch(`
+      *[_type == "movie"]
+      `)
+      setMoviesData(result);
+      setSortedData(result);
+    };
+    fetchData();
+  }, []);
+  console.log(moviesData)
+
   const genres = [
     {
       id: "0",
@@ -464,29 +483,41 @@ const HomeScreen = () => {
     },
   ];
 
-  const applyFilter =(filter)=> {
-setModalVisible(false);
-switch(filter){
-  case "English" :
-    setSortedData(sortedData.filter((item)=> item.original_language === selectedFilter));
-    break;
-  case "Kannada" :
-    setSortedData(sortedData.filter((item)=> item.original_language === selectedFilter));
-    break;
-  case "Telugu" :
-    setSortedData(sortedData.filter((item)=> item.original_language === selectedFilter));
-    break;
-  case "Hindi" :
-    setSortedData(sortedData.filter((item)=> item.original_language === selectedFilter));
-    break;
-  case "Tamil" :
-    setSortedData(sortedData.filter((item)=> item.original_language === selectedFilter));
-    break;
-  case "Malayalam" :
-    setSortedData(sortedData.filter((item)=> item.original_language === selectedFilter));
-    break;
-}
-  }
+  const applyFilter = (filter) => {
+    setModalVisible(false);
+    switch (filter) {
+      case "English":
+        setSortedData(
+          sortedData.filter((item) => item.original_language === selectedFilter)
+        );
+        break;
+      case "Kannada":
+        setSortedData(
+          sortedData.filter((item) => item.original_language === selectedFilter)
+        );
+        break;
+      case "Telugu":
+        setSortedData(
+          sortedData.filter((item) => item.original_language === selectedFilter)
+        );
+        break;
+      case "Hindi":
+        setSortedData(
+          sortedData.filter((item) => item.original_language === selectedFilter)
+        );
+        break;
+      case "Tamil":
+        setSortedData(
+          sortedData.filter((item) => item.original_language === selectedFilter)
+        );
+        break;
+      case "Malayalam":
+        setSortedData(
+          sortedData.filter((item) => item.original_language === selectedFilter)
+        );
+        break;
+    }
+  };
 
   return (
     <View>
@@ -514,13 +545,13 @@ switch(filter){
         <Foundation name="filter" size={24} color="black" />
       </Pressable>
       <BottomModal
-        onBackdropPress={() => setModalVisible(prev => !prev)}
+        onBackdropPress={() => setModalVisible((prev) => !prev)}
         swipeDirection={["up", "down"]}
         swipeThreshold={200}
         footer={
           <ModalFooter>
             <Pressable
-            onPress={()=>applyFilter(selectedFilter)}
+              onPress={() => applyFilter(selectedFilter)}
               style={{
                 paddingRight: 10,
                 marginLeft: "auto",
@@ -565,15 +596,17 @@ switch(filter){
                   key={index}
                   style={{
                     margin: 10,
-                   
-                    backgroundColor:"orange",
-                   
+
+                    backgroundColor: "orange",
+
                     paddingVertical: 5,
                     borderRadius: 25,
                     paddingHorizontal: 11,
                   }}
                 >
-                  <Text style={{color:"white",fontWeight:"500"}}>{item.language}</Text>
+                  <Text style={{ color: "white", fontWeight: "500" }}>
+                    {item.language}
+                  </Text>
                 </Pressable>
               ) : (
                 <Pressable
@@ -612,22 +645,24 @@ switch(filter){
               flexWrap: "wrap",
             }}
           >
-             {genres.map((item, index) =>
+            {genres.map((item, index) =>
               selectedFilter === item.language ? (
                 <Pressable
                   onPress={() => setSelectedFilter()}
                   key={index}
                   style={{
                     margin: 10,
-                   
-                    backgroundColor:"orange",
-                   
+
+                    backgroundColor: "orange",
+
                     paddingVertical: 5,
                     borderRadius: 25,
                     paddingHorizontal: 11,
                   }}
                 >
-                  <Text style={{color:"white",fontWeight:"500"}}>{item.language}</Text>
+                  <Text style={{ color: "white", fontWeight: "500" }}>
+                    {item.language}
+                  </Text>
                 </Pressable>
               ) : (
                 <Pressable
