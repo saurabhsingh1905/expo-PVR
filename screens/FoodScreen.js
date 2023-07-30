@@ -105,7 +105,7 @@ const FoodScreen = () => {
   const total = cart
     .map((item) => item.price * item.quantity)
     .reduce((curr, prev) => curr + prev, 0);
-  console.log(total);
+  // console.log(total);
 
   return (
     <View
