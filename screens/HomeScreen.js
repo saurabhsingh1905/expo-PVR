@@ -380,7 +380,7 @@ const HomeScreen = () => {
     };
     fetchData();
   }, []);
-  console.log(moviesData)
+  //console.log(moviesData)
 
   const genres = [
     {

@@ -106,7 +106,7 @@ setTimeout(() => {
     navigation.navigate("HomeScreen")
 }, 800);
   }
-  console.log(cities)
+ // console.log(cities)
 
   return (
     <View>
@@ -149,7 +149,7 @@ setTimeout(() => {
               style={{ width: 160, height: 100,opacity:0.8 }}
               imageStyle={{ borderRadius: 8 }}
             >
-                 {selectedCity === item.place && (
+                 {selectedCity === item.city && (
                 <View style={{flex:1,marginLeft:7,marginTop:7,alignContent:"flex-start"}}>
                     <AntDesign name="checkcircle" size={24} color="white" />
                 </View>

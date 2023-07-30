@@ -691,7 +691,7 @@ const MovieScreen = () => {
       ],
     },
   ];
-  console.log(locationId);
+  //console.log(locationId);
 
   useEffect(() => {
     const fetchTheatres = async () => {
@@ -712,7 +712,7 @@ const MovieScreen = () => {
     fetchTheatres();
   }, []);
 
-  console.log("shivi",reqData);
+  //console.log("shivi",reqData);
 
   useLayoutEffect(() => {
     navigation.setOptions({
