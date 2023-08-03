@@ -2,6 +2,8 @@ import { BackHandler, Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useLayoutEffect } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
+import RazorpayCheckout from "react-native-razorpay"
+import { client } from "../expopvr-sanity/sanity";
 
 const ConfirmationScreen = () => {
   const route = useRoute();
@@ -21,7 +23,61 @@ const ConfirmationScreen = () => {
   // console.log(grandTotal)
 
   const pay = ()=>{
+const options = {
+      description: "Adding To Wallet",
+      currency: "INR",
+      name: "PVR",
+      key: "rzp_test_sldad4Gs1J1EWM",
+      amount: grandTotal * 100,
+      prefill: {
+        email: "void@razorpay.com",
+        contact: "9191919191",
+        name: "RazorPay Software",
+      },
+      theme: { color: "#F37254" },
+    };
+    RazorpayCheckout.open(options).then((data) => {
+      console.log(data);
+        
+      //for blocking the seats------------------------------------
+     const updatedRows = [...route.params.rows];
+     route.params.selectedSeats.forEach((seat) => {
+       const rowIndex = updatedRows.findIndex((row) => row.row === seat.row);
+      // console.log("row Index",rowIndex);
+       const seatIndex = updatedRows[rowIndex].seats.findIndex((s) => s.number === seat.seat);
+      // console.log("seat Index",seatIndex);
 
+      const docId = route.params.docId;
+      client
+      .patch(docId)
+      .set({
+        [`row[${rowIndex}].seats[${seatIndex}].bookingStatus`]: "disabled",
+      })
+      .commit()
+      .then((updatedDoc) => {
+        console.log("updated doc: ",updatedDoc)
+      }).catch((err) => {
+        console.log("update failed",err)
+      })
+
+
+       updatedRows[rowIndex].seats[seatIndex].bookingStatus = "disabled";
+     });
+
+     const seatNumbers = route.params.selectedSeats.map((seat) => seat.row + seat.seat);
+  const result = seatNumbers.join(" ");
+
+  navigation.navigate("TicketScreen",{
+    selectedSeats: result,
+        mall: route.params.mall,
+        showtime: route.params.showtime,
+        date: route.params.date,
+        seats: route.params.selectedSeats,
+  })
+
+     setRows(updatedRows);
+     setSelectedSeats([]);
+    })
   }
 
   useLayoutEffect(() => {
